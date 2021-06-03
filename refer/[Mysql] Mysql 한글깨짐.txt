@@ -1,0 +1,23 @@
+#vi /etc/my.cnf 에서 기존내용 다 지우고 아래 내용 추가후 mysql 재시작
+
+
+[client]
+default-character-set=utf8
+
+[mysql]
+default-character-set=utf8
+
+[mysqld]
+collation-server=utf8_unicode_ci
+init-connect='SET NAMES utf8'
+character-set-server=utf8
+
+
+또는 JDBC 접속 주소 뒤에 아래의 파라미터 추가
+jdbc:mysql://localhost:3306/mydb?useUnicode=true&characterEncoding=utf8
+
+
+인터넷에서 추가해서 한글이 뜨는지 확인
+
+
+ INSERT INTO `MEMBER` VALUES ('111', '홍길동', 222, '대리', '102',  '2021-05-18 14:55:01');

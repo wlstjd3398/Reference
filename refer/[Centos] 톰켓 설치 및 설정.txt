@@ -1,0 +1,101 @@
+1. 톰캣 다운로드
+ - 먼저 자바가 설치 되었는지 꼭 확인 
+ # java -version
+ 자바 설치 안했으면(yum install -y java-1.8*)
+ - 톰캣 공식사이트에서 apache-tomcat-8.5.31.tar.gz  다운로드
+	8버전 tar.gz
+ - 반드시 8.5.31 버전으로 다운로드 8.5.37 버전은 start 안되는 이슈 발생!!!
+ - yum으로 톰캣 설치는 하지말것
+ - wget 도메인주소
+	ctrl+v 붙여넣기가 putty는 마우스오른쪽클릭 한번
+
+2. /root 에 업로드 후 압축 풀기
+ # tar -zxvf apache-tomcat-8.x.x.tar.gz
+
+3. cd /usr/local 로 이동 후 심볼릭 링크 생성
+ # mv apache-tomcat-8.x.x    /usr/local
+ # cd /usr/local
+	# rm apache-tomcat-8.x.x.tar.gz 설치파일 지우기 	# rm -rf 블라블라 디렉토리랑 하위까지 지우기가능
+ # ln   -s   apache-tomcat-8.x.x    tomcat
+
+4. 방화벽 설정(AWS는 제외)
+ # firewall-cmd --permanent --add-port=80/tcp
+ # firewall-cmd --permanent --add-port=8080/tcp
+ 	# firewall-cmd --zone=public --add-forward-port=port=80:proto=tcp:toport=8080 --permanent 안함 apche재시작해야함
+ # firewall-cmd --reload
+
+ # vi /etc/firewalld/zones/public.xml(AWS는 제외)
+ 	<forward-port to-port="8080" protocol="tcp" port="80"/>  <- 확인해서 위에 안해서 안해도 되는것
+
+5. 서비스 등록
+ # vi /usr/lib/systemd/system/tomcat.service 
+
+아래 내용 입력/저장
+[Unit]
+Description=tomcat Service
+After=network.target syslog.target
+
+[Service]
+Type=forking
+ExecStart=/usr/local/tomcat/bin/startup.sh start
+ExecStop=/usr/local/tomcat/bin/shutdown.sh stop
+
+[Install]
+WantedBy=multi-user.target
+
+6. systemd 재시작
+ # systemctl daemon-reload
+
+
+7. 톰캣 시작/ 재부팅 등록
+ # systemctl start tomcat
+ # systemctl status tomcat
+
+ # systemctl enable tomcat
+
+8. 브라우저 접속확인
+ - 192.168.xxx.xxx 주소 접속
+ - 톰캣 테스트 페이지 출력 확인
+ - 참고: AWS는 보안그룹에서 톰캣 포트 8080 인바운드 규칙으로 등록해야 됨
+
+9. 톰캣 Document Root 변경
+ # vi /usr/local/tomcat/conf/server.xml
+
+ 아래내용 수정
+ 152라인 : <Host name="192.168.xxx.xxx" appBase="/home/jsp/" unpackWARs="true" autoDeploy="true">   <---- 수정
+ 153라인 :     <Context path="" docBase="." reloadable="true"/>  <---- 추가
+
+10. 톰캣 unpackWARs 배포권한 755설정
+ 톰캣은 WAR 배포권한이 기본 750이다. 755로 변경해야 한다.
+ # vi /usr/local/tomcat/bin/catalina.sh
+
+ 295라인 근처 : UMASK="0027" 를  0022 로 변경
+
+11. 톰캣 홈 디렉터리 생성 및 시작페이지 생성
+ # mkdir    /home/jsp
+ # vi    /home/jsp/index.jsp
+ --------------------- 내  용 --------------------- 
+     <%
+	out.print("<h3>Hello JSP!!!</h3>");
+     %>
+ --------------------------------------------------
+
+12. 톰캣 재시작
+ # systemctl restart tomcat
+
+13. 배포확인
+ - 이클립스 - Export - 톰캣 홈 디렉토리 업로드
+destination 바탕화면으로 해서 /home/jsp에 Ch01.war 넣고 
+해당 주소로 확인
+ - 192.168.xxx.xxx/Ch01/hello.jsp 확인
+
+14. filezilla
+전에 저장해뒀던 것으로 포트22 로그인하기
+
+15.eclipse
+들어가서 해당 dynamic web project 폴더 - 오른쪽 마우스 클릭
+
+- export - war file - 바탕화면으로 위치설정 - 해당 파일은 filezilla /home/jsp/으로 옮겨서 
+
+이런식으로 http://192.168.15.101:8080/Ch02/2_1_Scriptlet.jsp 브라우저 확인 
+

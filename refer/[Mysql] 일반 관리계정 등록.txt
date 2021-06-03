@@ -1,0 +1,21 @@
+계정추가
+CREATE USER 'chhak'@'%' IDENTIFIED BY '1234';
+GRANT ALL PRIVILEGES ON chhak.* TO 'chhak'@'%';
+FLUSH PRIVILEGES;
+
+
+비번변경
+set password for 'chhak'@'%'=password('1234');
+
+
+계정삭제
+drop USER kjb@'%';
+
+원격 root에서 Grant all privileges ~ 쿼리 실행안될때
+mysql - user 에서 
+1. 호스트 %, User root 항목에서 Grant_priv 컬럼값을 N -> Y로 수동 변경
+2. systemctl restart mariadb 재시작
+
+
+root계정이 관리자에서 데이터들어가서 user별 권한볼수있음
+wlstjd3398계정이 일반계정으로 
