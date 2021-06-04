@@ -8,10 +8,12 @@ default-character-set=utf8
 default-character-set=utf8
 
 [mysqld]
-collation-server=utf8_unicode_ci
+collation-server=utf8_general_ci
 init-connect='SET NAMES utf8'
-character-set-server=utf8
+character-set-server=utf8_general_ci
 
+마리아디비 재시작
+sudo service mariadb restart
 
 또는 JDBC 접속 주소 뒤에 아래의 파라미터 추가
 jdbc:mysql://localhost:3306/mydb?useUnicode=true&characterEncoding=utf8
@@ -21,3 +23,17 @@ jdbc:mysql://localhost:3306/mydb?useUnicode=true&characterEncoding=utf8
 
 
  INSERT INTO `MEMBER` VALUES ('111', '홍길동', 222, '대리', '102',  '2021-05-18 14:55:01');
+
+
+[client]
+default-character-set = utf8
+[mysqld]
+init_connect = "SET collation_connection = utf8_general_ci"
+init_connect = "SET NAMES utf8"
+character-set-server = utf8
+collation-server = utf8_general_ci
+
+[mysql]
+default-character-set = utf8
+
+출처: https://kyome.tistory.com/134 [KYOME]

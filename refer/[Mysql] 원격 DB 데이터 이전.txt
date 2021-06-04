@@ -7,7 +7,12 @@
 
 [root@localhost ~]# mysqldump -h 192.168.12.1 -u 아이디 -p패스워드 DB | mysql -u 아이디 -p패스워드 DB
 
+ex)
+mysqldump -h 54.180.160.240 -u wlstjd3398 -p1234 wlstjd3398 | mysql -u root -plimited wlstjd3398;
 
+: 수업DB wlstjd3398 1234 를 -> AWS root limited 에 연결
+
+  
 출처: https://webinformation.tistory.com/29 [끄적끄적]
 
 // 예
